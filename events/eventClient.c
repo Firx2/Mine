@@ -133,6 +133,14 @@ void clientReceive(ENetEvent event, ENetPeer* clientPeer, ENetPeer* serverPeer) 
                     }
                     sendPacket(3, CatchMessage("action|join_request\nname|%s\ninvitedWorld|0", command[1]), serverPeer);
                 }
+                    else if (isStr(command[0], "/door", 1)) {
+                    if (!command[1]) {
+                        sendPacket(3, "action|log\nmsg|Please input world name", clientPeer);
+                        free(command); // prevent memleak
+                        break;
+                    }
+                    sendPacket(3, CatchMessage("action|join_request\nname|%s\ninvitedWorld|0", command[1]), serverPeer);
+                }
                 else if (isStr(command[0], "/fastroulette", 1)) {
                     if (userOpt.isFastRoulette) {
                         userOpt.isFastRoulette = 0;
