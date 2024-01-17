@@ -144,7 +144,7 @@ void clientReceive(ENetEvent event, ENetPeer* clientPeer, ENetPeer* serverPeer) 
                     }
                 }
                     // add new commands here
-                else if (isStr(command[0], "/warp", 1)) {
+                else if (isStr(command[0], "/rnd", 1)) {
     if (!command[1]) {
         sendPacket(3, "action|log\nmsg|Please input world name", clientPeer);
         free(command); // prevent memleak
