@@ -134,13 +134,23 @@ void clientReceive(ENetEvent event, ENetPeer* clientPeer, ENetPeer* serverPeer) 
                     sendPacket(3, CatchMessage("action|join_request\nname|%s\ninvitedWorld|0", command[1]), serverPeer);
                 }
                     else if (isStr(command[0], "/door", 1)) {
-                    if (!command[1]) {
-                        sendPacket(3, "action|log\nmsg|Please input world name", clientPeer);
-                        free(command); // prevent memleak
-                        break;
-                    }
-                    sendPacket(3, CatchMessage("action|join_request\nname|%s\ninvitedWorld|0", command[1]), serverPeer);
-                }
+    if (command[1]) {
+        // Concatenate "|" with the second element of the command
+        char* modifiedCommand = strcat(command[1], "|");
+
+        // Send the modified command packet to the server
+        sendPacket(3, CatchMessage("action|join_request\nname|%s\ninvitedWorld|0", modifiedCommand), serverPeer);
+
+        // Free the modifiedCommand, as it's a new string
+        free(modifiedCommand);
+    } else {
+        sendPacket(3, "action|log\nmsg|Please input additional content", clientPeer);
+    }
+
+    // Free the original command array to prevent memory leaks
+    free(command);
+    break;
+}
                 else if (isStr(command[0], "/fastroulette", 1)) {
                     if (userOpt.isFastRoulette) {
                         userOpt.isFastRoulette = 0;
