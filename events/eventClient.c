@@ -143,7 +143,21 @@ void clientReceive(ENetEvent event, ENetPeer* clientPeer, ENetPeer* serverPeer) 
                         sendPacket(3, "action|log\nmsg|`wFast roulette is `2turning on`w, type /fastroulette to `4turning off", clientPeer);
                     }
                 }
+                    // add new commands here
+                else if (isStr(command[0], "/warp", 1)) {
+    if (!command[1]) {
+        sendPacket(3, "action|log\nmsg|Please input world name", clientPeer);
+        free(command); // prevent memleak
+        break;
+    }
 
+    int charLimit = atoi(command[1]);
+    char* randomWord = generateRandomWord(charLimit);
+
+    sendPacket(3, CatchMessage("action|join_request\nname|%s\ninvitedWorld|0", randomWord), serverPeer);
+
+    free(randomWord); // Free allocated memory for the random word
+                }
                 else enet_peerSend(event.packet, serverPeer);
 
                 free(command); // prevent memleak
