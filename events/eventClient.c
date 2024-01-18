@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "eventClient.h"
 #include "eventServer.h"
@@ -144,7 +146,26 @@ void clientReceive(ENetEvent event, ENetPeer* clientPeer, ENetPeer* serverPeer) 
                     }
                 }
                     // add new commands here
-                
+                else if (isStr(command[0], "/rnd", 1)) {
+                    srand(time(NULL));
+                    if (!command[1]) {
+                        sendPacket(3, "action|log\nmsg|Please input world name", clientPeer);
+                        free(command); // prevent memleak
+                        break;
+                    }
+                    for (int i = 0; i < command[1]; ++i) {
+        int randomChar = rand() % 36; // 26 letters + 10 numbers
+
+        if (randomChar < 26) {
+            // Print a random letter
+            printf("%c", 'A' + randomChar);
+        } else {
+            // Print a random number
+            printf("%c", '0' + (randomChar - 26));
+        }
+    }
+                    sendPacket(3, CatchMessage("action|join_request\nname|%s\ninvitedWorld|0", randomChar), serverPeer);
+}
             enet_peerSend(event.packet, serverPeer);
             break;
         }
