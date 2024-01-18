@@ -144,46 +144,7 @@ void clientReceive(ENetEvent event, ENetPeer* clientPeer, ENetPeer* serverPeer) 
                     }
                 }
                     // add new commands here
-                else if (isStr(command[0], "/rnd", 1)) {
-    if (!command[1]) {
-        sendPacket(3, "action|log\nmsg|Please input world name", clientPeer);
-        free(command); // prevent memleak
-        break;
-    }
-
-    int charLimit = atoi(command[1]);
-    char* randomWord = generateRandomWord(charLimit);
-
-    sendPacket(3, CatchMessage("action|join_request\nname|%s\ninvitedWorld|0", randomWord), serverPeer);
-
-    free(randomWord); // Free allocated memory for the random word
-                }
-                else enet_peerSend(event.packet, serverPeer);
-
-                free(command); // prevent memleak
-                break;
-            }
-            else if (isStr(packetText, "action|dialog_return", 0)) {
-                char** split = strsplit(packetText, "\n", 0);
-
-                if (isStr(split[1], "dialog_name|test_dialog", 1)) {
-                    sendPacket(3, CatchMessage("action|log\nmsg|Its work!\nwith user input: %s\n", split[3] + 6), clientPeer);
-                }
-                else enet_peerSend(event.packet, serverPeer);
-
-                free(split);
-                break;
-            }
-            enet_peerSend(event.packet, serverPeer);
-            break;
-        }
-        case 3: {
-            char* packetText = GetTextPointerFromPacket(event.packet);
-            printf("[CLIENT -> SERVER] Packet 3: received packet text: %s\n", packetText);
-            if (isStr(packetText, "action|quit", 1)) {
-                isLoop = 0;
-                doLoop = 1;
-            }
+                
             enet_peerSend(event.packet, serverPeer);
             break;
         }
